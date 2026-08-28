@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스트레칭 추천 앱</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ① 시작 화면 -->
+    <div id="screen-home" class="screen active">
+        <div class="screen-content">
+            <div class="logo">
+                <h1>🏃 스트레칭</h1>
+            </div>
+            <p class="description">운동 전 스트레칭으로 부상을 예방하세요.</p>
+            <div class="home-features">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-text">스포츠별 맞춤 루틴</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">⏱️</div>
+                    <div class="feature-text">3분, 5분, 10분 선택</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">운동 기록 관리</div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="goToScreen('sports')" style="margin-top: 30px;">시작하기</button>
+            <button class="btn-secondary" onclick="goToScreen('records')" style="margin-top: 15px;">기록 보기</button>
+        </div>
+    </div>
+
+    <!-- ② 스포츠 종목 선택 화면 -->
+    <div id="screen-sports" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="goToScreen('home')">←</button>
+            <h2>스포츠 종목 선택</h2>
+        </div>
+        <div class="screen-content">
+            <p class="screen-subtitle">오늘 할 운동 종목을 선택해주세요</p>
+            <div id="sports-grid" class="sports-grid">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ③ 세부 운동 선택 화면 -->
+    <div id="screen-detail" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="goToScreen('sports')">←</button>
+            <h2>세부 운동 선택</h2>
+        </div>
+        <div class="screen-content">
+            <p id="selected-sport" class="selected-info"></p>
+            <div id="detail-grid" class="detail-grid">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ④ 스트레칭 부위 선택 화면 -->
+    <div id="screen-areas" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="goToScreen('detail')">←</button>
+            <h2>스트레칭 부위 선택</h2>
+        </div>
+        <div class="screen-content">
+            <p class="screen-subtitle">스트레칭할 신체 부위를 선택해주세요</p>
+            <div class="body-diagram">
+                <div class="body-figure">🧍</div>
+                <p class="body-text">관심 부위를 클릭하거나 선택하기</p>
+            </div>
+            <div class="area-select-buttons">
+                <button class="btn-quick" onclick="selectAllAreas()">전체 선택</button>
+                <button class="btn-quick" onclick="selectRecommendedAreas()">추천 부위</button>
+            </div>
+            <div id="areas-grid" class="areas-grid">
+                <!-- 동적으로 생성됨 -->
+            </div>
+            <button class="btn-primary btn-areas-next" onclick="validateAndGoToTime()">다음</button>
+        </div>
+    </div>
+
+    <!-- ⑤ 시간 설정 화면 -->
+    <div id="screen-time" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="goToScreen('areas')">←</button>
+            <h2>시간 설정</h2>
+        </div>
+        <div class="screen-content">
+            <p class="screen-subtitle">운동 시간에 맞춰 루틴을 선택해주세요</p>
+            <div class="time-options">
+                <div class="time-card" onclick="selectTime(1, this)">
+                    <div class="time-icon">⚡</div>
+                    <div class="time-duration">1분</div>
+                    <div class="time-label">초단시간</div>
+                    <div class="time-desc">점심시간 추천</div>
+                </div>
+                <div class="time-card" onclick="selectTime(3, this)">
+                    <div class="time-icon">⚡</div>
+                    <div class="time-duration">3분</div>
+                    <div class="time-label">퀵 루틴</div>
+                    <div class="time-desc">바쁜 날씨 추천</div>
+                </div>
+                <div class="time-card" onclick="selectTime(5, this)">
+                    <div class="time-icon">⭐</div>
+                    <div class="time-duration">5분</div>
+                    <div class="time-label">기본 루틴</div>
+                    <div class="time-desc">가장 인기 있음</div>
+                </div>
+                <div class="time-card" onclick="selectTime(10, this)">
+                    <div class="time-icon">🔥</div>
+                    <div class="time-duration">10분</div>
+                    <div class="time-label">집중 루틴</div>
+                    <div class="time-desc">철저한 준비 추천</div>
+                </div>
+            </div>
+            <div class="custom-time-section">
+                <p class="custom-time-label">또는 직접 입력해주세요</p>
+                <div class="custom-time-input-group">
+                    <input type="number" id="custom-time-input" min="1" max="60" placeholder="분">
+                    <button class="btn-custom-time" onclick="selectCustomTime()">선택</button>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="goToRoutine()" style="margin-top: 20px;">루틴 보기</button>
+        </div>
+    </div>
+
+    <!-- ⑥ 추천 스트레칭 루틴 화면 -->
+    <div id="screen-routine" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="goToScreen('time')">←</button>
+            <h2>스트레칭 루틴</h2>
+        </div>
+        <div class="screen-content">
+            <div class="routine-info">
+                <h3 id="routine-title"></h3>
+                <p id="routine-time">총 시간: --분</p>
+                <p class="routine-desc">📋 아래 스트레칭들을 순서대로 따라하세요</p>
+            </div>
+            <div id="routine-list" class="routine-list">
+                <!-- 동적으로 생성됨 -->
+            </div>
+            <button class="btn-primary" onclick="startRoutine()" style="margin-top: 20px;">루틴 시작</button>
+        </div>
+    </div>
+
+    <!-- ⑦ 스트레칭 상세 화면 -->
+    <div id="screen-detail-stretch" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="exitRoutine()">← 나가기</button>
+            <h2>스트레칭 상세</h2>
+        </div>
+        <div class="screen-content">
+            <div id="progress-info" class="progress-info">1 / 5</div>
+            <div class="stretch-demo">
+                <div id="steps-visualization" class="steps-visualization">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+            <div class="stretch-info">
+                <h3 id="stretch-name"></h3>
+                <div class="stretch-benefits">
+                    <p><strong>효과:</strong> <span id="stretch-benefit"></span></p>
+                </div>
+                <p id="stretch-description" class="stretch-description"></p>
+                <div class="stretch-steps">
+                    <strong>운동 방법:</strong>
+                    <ol id="stretch-steps-list"></ol>
+                </div>
+                <div class="stretch-tips">
+                    <p><strong>💡 팁:</strong> <span id="stretch-tip"></span></p>
+                </div>
+                <div class="stretch-precaution">
+                    <p><strong>⚠️ 주의:</strong> <span id="stretch-precaution"></span></p>
+                </div>
+            </div>
+            <div class="time-display">
+                <span id="remaining-time">00:00</span>
+            </div>
+            <div id="progress-bar" class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div class="stretch-controls">
+                <button class="btn-nav" onclick="prevStretch()">이전</button>
+                <button class="btn-nav" id="pause-btn" onclick="togglePause()">일시정지</button>
+                <button class="btn-nav" onclick="nextStretch()">다음</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⑧ 루틴 완료 화면 -->
+    <div id="screen-complete" class="screen">
+        <div class="screen-content">
+            <div class="complete-message">
+                <div class="checkmark"></div>
+                <h1>루틴 완료!</h1>
+                <p>정말 수고했어요! 👏</p>
+                <p class="complete-extra">오늘도 부상 없이 즐거운 운동 되세요!</p>
+            </div>
+            <div class="complete-info">
+                <div class="info-item">
+                    <span class="label">스포츠 종목:</span>
+                    <span id="complete-sport" class="value"></span>
+                </div>
+                <div class="info-item">
+                    <span class="label">루틴:</span>
+                    <span id="complete-routine" class="value"></span>
+                </div>
+                <div class="info-item">
+                    <span class="label">총 시간:</span>
+                    <span id="complete-time" class="value"></span>
+                </div>
+                <div class="info-item">
+                    <span class="label">완료 시간:</span>
+                    <span id="complete-datetime" class="value"></span>
+                </div>
+            </div>
+            <div class="complete-buttons">
+                <button class="btn-primary" onclick="goToScreen('home')">홈으로</button>
+                <button class="btn-secondary" onclick="goToScreen('records')">기록 보기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⑨ 기록 화면 -->
+    <div id="screen-records" class="screen">
+        <div class="screen-header">
+            <button class="btn-back" onclick="goToScreen('home')">←</button>
+            <h2>운동 기록</h2>
+        </div>
+        <div class="screen-content">
+            <div class="record-tabs">
+                <button class="tab-btn active" onclick="switchRecordTab('weekly')">주간</button>
+                <button class="tab-btn" onclick="switchRecordTab('monthly')">월간</button>
+                <button class="tab-btn" onclick="switchRecordTab('yearly')">연간</button>
+                <button class="tab-btn" onclick="switchRecordTab('calendar')">캘린더</button>
+            </div>
+            <div class="record-stats">
+                <div class="stat-card">
+                    <div class="stat-label">총 루틴</div>
+                    <div class="stat-value" id="stat-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">총 시간</div>
+                    <div class="stat-value" id="stat-time">0분</div>
+                </div>
+            </div>
+            <div id="calendar-container" class="calendar-container" style="display:none;">
+                <div class="calendar-header">
+                    <button class="calendar-nav" onclick="prevMonth()">←</button>
+                    <div class="calendar-title" id="calendar-title"></div>
+                    <button class="calendar-nav" onclick="nextMonth()">→</button>
+                </div>
+                <div class="calendar-weekdays">
+                    <div class="weekday">일</div>
+                    <div class="weekday">월</div>
+                    <div class="weekday">화</div>
+                    <div class="weekday">수</div>
+                    <div class="weekday">목</div>
+                    <div class="weekday">금</div>
+                    <div class="weekday">토</div>
+                </div>
+                <div id="calendar-days" class="calendar-days"></div>
+            </div>
+            <div id="record-list" class="record-list">
+                <!-- 동적으로 생성됨 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="data/stretching-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
